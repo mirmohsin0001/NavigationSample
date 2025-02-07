@@ -23,6 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.sparrow.navigationsample.ui.theme.NavigationSampleTheme
 
 class MainActivity : ComponentActivity() {
@@ -32,10 +35,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             NavigationSampleTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    FirstScreen()
+                    MyApp()
                 }
             }
         }
@@ -43,25 +45,23 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun FirstScreen() {
-    val name = remember { mutableStateOf("") }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("This is the first screen", fontSize = 24.sp)
-        Spacer(Modifier.height(16.dp))
-        OutlinedTextField(
-            value = name.value, onValueChange = {
-                name.value = it
+fun MyApp() {
+    val navController = rememberNavController()
+    NavHost(startDestination = "firstscreen", navController = navController) {
+        composable(route = "firstscreen"){
+            FirstScreen {
+                navController.navigate("secondscreen")
             }
-        )
-        Spacer(Modifier.height(16.dp))
-        Button(onClick = {}) {
-            Text("Next Screen")
+        }
+        composable(route = "secondscreen"){
+            SecondScreen {
+                navController.navigate("thirdscreen")
+            }
+        }
+        composable(route = "thirdscreen"){
+            ThirdScreen {
+                navController.navigate("firstscreen")
+            }
         }
     }
 }
